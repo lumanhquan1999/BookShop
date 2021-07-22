@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="html_head">
+	<meta charset="ISO-8859-1">
+	<title>Book Shop</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" th:href="@{/fontawesome/all.css}">
+	<link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+	<div th:fragment="menu">
+		<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+			<ul class="navbar-nav mr-auto">
+				
+				<li class="nav-item">
+					<a class="nav-link" th:href="@{/books/list}"><i class="fa fa-home fa-2x"></i></a>
+				</li>
+			
+				<li class="nav-item">
+					<a class="nav-link" sec:authorize="hasAuthority('ADMIN')" th:href="@{/list_users}">Users</a>
+				</li>
+				
+			</ul>
+			
+			<ul class="navbar-nav">
+				
+				<li class="nav-item">
+					<a class="nav-link" sec:authorize="!isAuthenticated()" th:href="@{/login}">Login</a>
+				</li>
+				
+				<li class="nav-item">
+					<a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/logout}" method="post">Logout</a>
+				</li>
+				
+			</ul>
+		
+		</nav>
+	</div>
+	
+	<div th:fragment="footer" class="text-center">
+		<p>Book Shop - Copyright &copy; Quan</p>
+	</div>
+	
+</body>
+
+</html>
