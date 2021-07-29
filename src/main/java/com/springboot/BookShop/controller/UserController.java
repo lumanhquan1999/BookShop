@@ -23,7 +23,7 @@ import org.supercsv.prefs.CsvPreference;
 
 import com.springboot.BookShop.entity.User;
 import com.springboot.BookShop.service.UserService;
-import com.springboot.BookShop.service.Utility;
+import com.springboot.BookShop.utils.Utils;
 
 @Controller
 public class UserController {
@@ -44,7 +44,7 @@ public class UserController {
 		
 		userService.registerUser(user);
 		
-		String siteURL = Utility.getSiteURL(request);
+		String siteURL = Utils.getSiteURL(request);
 		userService.sendVerificationEmail(user, siteURL);
 		
 		return "register/register_success";
