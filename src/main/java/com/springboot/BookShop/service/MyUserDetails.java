@@ -21,6 +21,10 @@ public class MyUserDetails implements UserDetails {
 		this.user = user;
 	}
 
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		
@@ -44,7 +48,7 @@ public class MyUserDetails implements UserDetails {
 		
 		return user.getUsername();
 	}
-
+	
 	@Override
 	public boolean isAccountNonExpired() {
 		
