@@ -1,22 +1,28 @@
 package com.springboot.BookShop.controller;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.springboot.BookShop.entity.Book;
 import com.springboot.BookShop.model.BookInfo;
 import com.springboot.BookShop.model.CartInfo;
+import com.springboot.BookShop.model.CustomerForm;
+import com.springboot.BookShop.model.CustomerInfo;
 import com.springboot.BookShop.service.BookService;
+import com.springboot.BookShop.service.OrderService;
 import com.springboot.BookShop.utils.Utils;
 
 @Controller
@@ -25,17 +31,32 @@ public class AppController {
 	@Autowired
 	private BookService bookService;
 	
+	@Autowired
+	private OrderService orderService;
+	
 	@GetMapping("")
 	public String viewHomePage() {
 		
 		return "index";
 	}
 	
-	@GetMapping("/403")
-	public String error403() {
+	@GetMapping("/login")
+	public String showLoginPage() {
 		
-		return "403";
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		
+		if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+			return "login";
+		}
+		return "redirect:/books/list";
 	}
+	
+//	@PostMapping("/logout")
+//	public String logout() {
+//		SecurityContextHolder.getContext().setAuthentication(null);
+//		
+//		return "redirect:/books/list";
+//	}
 	
 	@GetMapping("/buyBook")
 	public String listBookHandler(HttpServletRequest request , Model model,
@@ -61,7 +82,7 @@ public class AppController {
 		CartInfo myCart = Utils.getCartInSession(request);
 		
 		model.addAttribute("cartForm", myCart);
-		return "shopping_cart";
+		return "cart/shopping_cart";
 	}
 	
 	@PostMapping("/shoppingCart")
@@ -91,16 +112,84 @@ public class AppController {
 		return "redirect:/shoppingCart";
 	}
 	
-	@GetMapping("/bookImage")
-	public void bookImage(HttpServletRequest request, HttpServletResponse response, Model model,
-			@RequestParam("id") Integer id) throws IOException {
-		Book book = null;
-		if (id != null) {
-			book = this.bookService.findById(id);
+	@GetMapping("/shoppingCartCustomer")
+	public String shoppingCartCustomerForm(HttpServletRequest request, Model model) {
+		CartInfo cartInfo = Utils.getCartInSession(request);
+		if (cartInfo.isEmpty()) {
+			return "redirect:/shoppingCart";
 		}
 		
-		if (book != null && book.getImage() != null) {
-			response.setContentType("image/jpeg, image/jpg, image/png");
+		CustomerInfo customerInfo = cartInfo.getCustomerInfo();
+		CustomerForm customerForm = new CustomerForm(customerInfo);
+		model.addAttribute("customerForm", customerForm);
+		
+		return "cart/shopping_cart_customer";
+	}
+	
+	@PostMapping("/shoppingCartCustomer")
+	public String shoppingCartCustomerSave(HttpServletRequest request, Model model,
+		@ModelAttribute("customerForm") @Validated CustomerForm customerForm,
+		BindingResult result, final RedirectAttributes redirectAttributes) {
+			if (result.hasErrors()) {
+				customerForm.setValid(false);
+				return "cart/shopping_cart_customer";
+			}
+			
+			customerForm.setValid(true);
+			CartInfo cartInfo = Utils.getCartInSession(request);
+			CustomerInfo customerInfo = new CustomerInfo(customerForm);
+			cartInfo.setCustomerInfo(customerInfo);
+			
+			return "redirect:/shoppingCartConfirmation";
 		}
+	
+	@GetMapping("/shoppingCartConfirmation")
+	public String shoppingCartConfirmationReview(HttpServletRequest request, Model model) {
+		CartInfo cartInfo = Utils.getCartInSession(request);
+		
+		if (cartInfo == null || cartInfo.isEmpty()) {
+			return "redirect:/shoppingCart";
+		} else if (!cartInfo.isValidCustomer()) {
+			return "redirect:/shoppingCartCustomer";
+		}
+		model.addAttribute("myCart", cartInfo);
+		
+		return "cart/shopping_cart_confirmation";
+	}
+	
+	@PostMapping("/shoppingCartConfirmation")
+	public String shoppingCartConfirmationSave(HttpServletRequest request, Model model) {
+		CartInfo cartInfo = Utils.getCartInSession(request);
+		
+		if (cartInfo.isEmpty()) {
+			return "redirect:/shoppingCart";
+		} 
+		System.out.println(cartInfo.getCustomerInfo().getName());
+		/**
+		try {
+			orderService.saveOrder(cartInfo);
+		} catch (Exception e) {
+			return "cart/shopping_cart_confirmation";
+		}**/
+		orderService.saveOrder(cartInfo);
+		System.out.println(cartInfo.getCustomerInfo().getName());
+		Utils.removeCartInSession(request);
+		
+		Utils.storeLastOrderedCartInSession(request, cartInfo);
+		
+		return "redirect:/shoppingCartFinalize";
+	}
+	
+	@GetMapping("/shoppingCartFinalize")
+	public String shoppingCartFinalize(HttpServletRequest request, Model model) {
+		CartInfo lastOrderedCart = Utils.getLastOrderedCartInSession(request);
+		
+		if (lastOrderedCart == null) {
+			return "redirect:/shoppingCart";
+		}
+		
+		model.addAttribute("lastOrderedCart", lastOrderedCart);
+		
+		return "cart/shopping_cart_finalize";
 	}
 }
