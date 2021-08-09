@@ -1,7 +1,11 @@
 package com.springboot.BookShop.controller;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,8 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
@@ -39,10 +47,33 @@ public class UserController {
 	}
 	
 	@PostMapping("/process_register")
-	public String processRegistration(User user, HttpServletRequest request) 
-			throws UnsupportedEncodingException, MessagingException {
+	public String processRegistration(@ModelAttribute("user") User user, 
+			@RequestParam("image") MultipartFile file, 
+			HttpServletRequest request) 
+			throws MessagingException, IOException {
+		
+		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+		
+		user.setAvatar(fileName);
 		
 		userService.registerUser(user);
+		
+		User savedUser = userService.save(user);
+		
+		String uploadDir = "./avatar-images/" + savedUser.getId();
+		
+		Path uploadPath = Paths.get(uploadDir);
+		
+		if (!Files.exists(uploadPath)) {
+			Files.createDirectories(uploadPath);
+		}
+		
+		try (InputStream inputStream = file.getInputStream()) {
+			Path filePath = uploadPath.resolve(fileName);
+			Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			throw new IOException("Could not save upload file: " + fileName);
+		}
 		
 		String siteURL = Utils.getSiteURL(request);
 		userService.sendVerificationEmail(user, siteURL);

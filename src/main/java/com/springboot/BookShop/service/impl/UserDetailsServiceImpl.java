@@ -1,4 +1,4 @@
-package com.springboot.BookShop.service;
+package com.springboot.BookShop.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.springboot.BookShop.dao.UserRepository;
 import com.springboot.BookShop.entity.User;
+import com.springboot.BookShop.service.MyUserDetails;
 
 public class UserDetailsServiceImpl implements UserDetailsService {
 

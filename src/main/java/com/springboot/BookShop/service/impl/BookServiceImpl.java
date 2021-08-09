@@ -1,4 +1,4 @@
-package com.springboot.BookShop.service;
+package com.springboot.BookShop.service.impl;
 
 import java.util.Optional;
 
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.springboot.BookShop.dao.BookRepository;
 import com.springboot.BookShop.entity.Book;
+import com.springboot.BookShop.service.BookService;
 
 @Component
 public class BookServiceImpl implements BookService {
@@ -25,7 +26,7 @@ public class BookServiceImpl implements BookService {
 		Sort sort = Sort.by(sortField);
 		sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
 		
-		Pageable pageable = PageRequest.of(pageNumber - 1, 1, sort);
+		Pageable pageable = PageRequest.of(pageNumber - 1, 2, sort);
 		
 		if (keyword != null) {
 			return bookRepository.findAll(keyword, pageable);

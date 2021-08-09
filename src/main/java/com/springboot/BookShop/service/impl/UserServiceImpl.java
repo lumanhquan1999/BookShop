@@ -1,4 +1,4 @@
-package com.springboot.BookShop.service;
+package com.springboot.BookShop.service.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import com.springboot.BookShop.dao.UserRepository;
 import com.springboot.BookShop.entity.User;
+import com.springboot.BookShop.service.MyUserDetails;
+import com.springboot.BookShop.service.UserService;
 
 import net.bytebuddy.utility.RandomString;
 
@@ -40,7 +42,7 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findAll();
 	}
 	
-	public User registerUser(User user) {
+	public void registerUser(User user) {
 
 		encodePassword(user);
 		user.setCreateDate(new Date());
@@ -48,7 +50,9 @@ public class UserServiceImpl implements UserService {
 		
 		String randomCode = RandomString.make(64);
 		user.setVerificationCode(randomCode);
-		
+	}
+	
+	public User save(User user) {
 		return userRepository.save(user);
 	}
 	
@@ -75,7 +79,7 @@ public class UserServiceImpl implements UserService {
 		mailSender.send(message);
 	}
 
-	public void updateUser(User user) {
+	public User updateUser(User user) {
 		
 		User existUser = userRepository.findById(user.getId()).get();
 		
@@ -87,7 +91,7 @@ public class UserServiceImpl implements UserService {
 		
 		user.setEnable(true);
 		
-		userRepository.save(user);
+		return userRepository.save(user);
 	}
 	
 	public boolean verify(String verificationCode) {
@@ -106,13 +110,20 @@ public class UserServiceImpl implements UserService {
 		
 		if (authentication == null) 
 			return null;
-		System.out.println("1");
 		User user = null;
 		Object principal = authentication.getPrincipal();
 		
 		if (principal instanceof MyUserDetails) {
 			user = userRepository.getUserByUsername(((MyUserDetails) principal).getUsername());
 		} 
+		
+		return user;
+	}
+
+	@Override
+	public User findByUsername(String username) {
+		
+		User user = userRepository.findByUsername(username);
 		
 		return user;
 	}
