@@ -9,7 +9,7 @@
 		</div>
 		
 		<form th:action="@{/process_register}" th:object="${user}" method="POST" 
-						enctype="multipart/form-data">
+						enctype="multipart/form-data" style="max-width: 600px; margin: 0 auto;">
 		<div class="m-3">
 		<div class="form-group column">
 			<input type="hidden" th:field="*{id}"/>
@@ -111,5 +111,7 @@
 			reader.readAsDataURL(file);
 		}
 	</script>
+	
+	<div th:replace="fragments :: footer"></div>
 </body>
 </html>
