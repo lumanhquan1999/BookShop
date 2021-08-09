@@ -1,29 +1,32 @@
 package com.springboot.BookShop.entity;
 
-import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name="order", uniqueConstraints = { @UniqueConstraint(columnNames = "order_num")})
-public class Order implements Serializable {
-
-	private static final long serialVersionUID = -2576670215015463100L;
+@Table(name="`order`")
+public class Order {
 	
 	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
-	private String id;
+	private Integer id;
 	
 	@Column(name="order_date")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date orderDate;
-	
-	@Column(name="order_num")
-	private int orderNum;
 	
 	@Column(name="amount")
 	private double amount;
@@ -40,15 +43,33 @@ public class Order implements Serializable {
 	@Column(name="customer_phone")
 	private String customerPhone;
 	
+	@OneToMany(mappedBy="order", fetch=FetchType.LAZY, cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	private List<OrderDetail> orderDetails;
+	
+//	@ManyToOne(fetch=FetchType.EAGER, cascade= CascadeType.ALL)
+//	@JoinColumn(name="user_id")
+//	private User user;
+	
 	public Order() {
 		
 	}
 
-	public String getId() {
+	public Order(Integer id, Date orderDate, double amount, String customerName, String customerAddress,
+			String customerEmail, String customerPhone) {
+		this.id = id;
+		this.orderDate = orderDate;
+		this.amount = amount;
+		this.customerName = customerName;
+		this.customerAddress = customerAddress;
+		this.customerEmail = customerEmail;
+		this.customerPhone = customerPhone;
+	}
+
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -58,14 +79,6 @@ public class Order implements Serializable {
 
 	public void setOrderDate(Date orderDate) {
 		this.orderDate = orderDate;
-	}
-
-	public int getOrderNum() {
-		return orderNum;
-	}
-
-	public void setOrderNum(int orderNum) {
-		this.orderNum = orderNum;
 	}
 
 	public double getAmount() {
@@ -106,6 +119,14 @@ public class Order implements Serializable {
 
 	public void setCustomerPhone(String customerPhone) {
 		this.customerPhone = customerPhone;
+	}
+
+	public List<OrderDetail> getOrderDetails() {
+		return orderDetails;
+	}
+
+	public void setOrderDetails(List<OrderDetail> orderDetails) {
+		this.orderDetails = orderDetails;
 	}
 	
 }

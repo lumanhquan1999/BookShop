@@ -3,8 +3,8 @@ package com.springboot.BookShop.model;
 public class OrderDetailInfo {
 
 	private Integer id;
-	private String bookId;
-	private String productName;
+	private Integer bookId;
+	private String bookName;
 	
 	private int quantity;
 	private double price;
@@ -14,10 +14,10 @@ public class OrderDetailInfo {
 		
 	}
 
-	public OrderDetailInfo(Integer id, String bookId, String productName, int quantity, double price, double amount) {
+	public OrderDetailInfo(Integer id, Integer bookId, String bookName, int quantity, double price, double amount) {
 		this.id = id;
 		this.bookId = bookId;
-		this.productName = productName;
+		this.bookName = bookName;
 		this.quantity = quantity;
 		this.price = price;
 		this.amount = amount;
@@ -31,20 +31,20 @@ public class OrderDetailInfo {
 		this.id = id;
 	}
 
-	public String getBookId() {
+	public Integer getBookId() {
 		return bookId;
 	}
 
-	public void setBookId(String bookId) {
+	public void setBookId(Integer bookId) {
 		this.bookId = bookId;
 	}
 
 	public String getProductName() {
-		return productName;
+		return bookName;
 	}
 
 	public void setProductName(String productName) {
-		this.productName = productName;
+		this.bookName = productName;
 	}
 
 	public int getQuantity() {

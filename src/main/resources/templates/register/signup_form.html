@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org">
-<head>
-	<meta charset="ISO-8859-1">
-	<title>Registration</title>
-	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css"/>
-	
-</head>
+<head th:replace="fragments :: html_head">
 
 <body>
 	<div class="container text-center">
@@ -13,20 +8,21 @@
 			<h1>User Registration</h1>
 		</div>
 		
-		<form th:action="@{/process_register}" method="POST"
-			style="max-width: 600px; margin: 0 auto;"
-			th:object="${user}"
-			>
+		<form th:action="@{/process_register}" th:object="${user}" method="POST" 
+						enctype="multipart/form-data">
 		<div class="m-3">
+		<div class="form-group column">
+			<input type="hidden" th:field="*{id}"/>
+			
 			<div class="form-group row">
-				<label class="col-form-label col-4">Username</label>
+				<label class="col-form-label col-4">Username:</label>
 				<div class="col-8">
 					<input type="text" class="form-control" th:field="*{username}" required/>
 				</div>				
 			</div>
 			
 			<div class="form-group row">
-				<label class="col-form-label col-4">Password</label>
+				<label class="col-form-label col-4">Password:</label>
 				<div class="col-8">
 					<input type="password" class="form-control" th:field="*{password}" required 
 					minlength="6" maxlength="10"/>
@@ -34,35 +30,35 @@
 			</div>
 			
 			<div class="form-group row">
-				<label class="col-form-label col-4">E-mail</label>
+				<label class="col-form-label col-4">E-mail:</label>
 				<div class="col-8">
 					<input type="email" class="form-control" th:field="*{email}" required/>
 				</div>				
 			</div>
 			
 			<div class="form-group row">
-				<label class="col-form-label col-4">Name</label>
+				<label class="col-form-label col-4">Name:</label>
 				<div class="col-8">
 					<input type="text" class="form-control" th:field="*{name}" required/>
 				</div>				
 			</div>
 			
 			<div class="form-group row">
-				<label class="col-form-label col-4">Phone Number</label>
+				<label class="col-form-label col-4">Phone Number:</label>
 				<div class="col-8">
 					<input type="text" class="form-control" th:field="*{telephoneNumber}" required/>
 				</div>				
 			</div>
 			
 			<div class="form-group row">
-				<label class="col-form-label col-4">Date Of Birth</label>
+				<label class="col-form-label col-4">Date Of Birth:</label>
 				<div class="col-8">
 					<input type="date" class="form-control" th:field="*{dateOfBirth}" required/>
 				</div>				
 			</div>
 			
 			<div class="form-group row">
-				<label class="col-form-label col-4">Gender</label>
+				<label class="col-form-label col-4">Gender:</label>
 				<div class="col-8">
 					<input type="radio" id="male" name="gender" value="Male" th:field="*{gender}" required>
 					<label for="male">Male</label>
@@ -75,14 +71,45 @@
 				</div>				
 			</div>
 			
+			<div class="form-group row">
+				<label class="col-form-label col-4">Profile Picture:</label>
+				<div class="col-8">
+					<input type="file" name="image" id="image" accept="{image/png, image/jpeg, image/jpg}"/>
+				<br><br>
+				<img id="thumbnail" alt="Image Preview"/>
+				</div>
+			</div>
+			
 			<div>
 				<button type="submit" class="btn btn-primary">Sign Up</button>
 			</div>
-			
+		</div>
+		
 		</div>
 		</form>
 		<hr>
 		<a th:href="@{/}">Back</a>
 	</div>
+	
+	<script type="text/javascript">
+		$(document).ready(function() {
+			
+			$('#image').change(function() {
+				showImageThumbnail(this);
+			});
+		}
+		);
+		
+		function showImageThumbnail(fileInput) {
+			file = fileInput.files[0];
+			reader = new FileReader();
+			
+			reader.onload = function(e) {
+				$('#thumbnail').attr('src', e.target.result);
+			};
+			
+			reader.readAsDataURL(file);
+		}
+	</script>
 </body>
 </html>

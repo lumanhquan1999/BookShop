@@ -16,8 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -29,7 +29,7 @@ public class User {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
-	private int Id;
+	private Integer id;
 	
 	@Column(name="name")
 	private String name;
@@ -56,11 +56,17 @@ public class User {
 	@Column(name="create_date")
 	private Date createDate;
 	
+	@Column(name="avatar")
+	private String avatar;
+	
 	@Column(name="enable")
 	private boolean enable;
 	
 	@Column(name="verification_code", updatable = false)
 	private String verificationCode;
+	
+//	@OneToMany(mappedBy="user", fetch=FetchType.LAZY, cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH} )
+//	private List<Order> orders;
 	
 	@ManyToMany(fetch=FetchType.EAGER, cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH} )
 	@JoinTable(name="user_role", joinColumns=@JoinColumn(name="user_id"), inverseJoinColumns=@JoinColumn(name="role_id"))
@@ -70,9 +76,6 @@ public class User {
 	@JoinTable(name="user_address", joinColumns=@JoinColumn(name="user_id"), inverseJoinColumns=@JoinColumn(name="address_id"))
 	private List<Address> addresses;
 	
-	@OneToOne(mappedBy="user", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	private Cart shoppingCart;
-	
 	@OneToMany(mappedBy="user", fetch=FetchType.LAZY, cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 	private List<Bill> bills;
 	
@@ -80,16 +83,15 @@ public class User {
 		
 	}
 
-	public User(int id, String name, Date dateOfBirth, String gender, String telephoneNumber, String email,
-			List<Address> addresses, Cart shoppingCart, List<Bill> bills) {
-		Id = id;
+	public User(Integer id, String name, Date dateOfBirth, String gender, String telephoneNumber, String email,
+			List<Address> addresses, List<Bill> bills) {
+		this.id = id;
 		this.name = name;
 		this.dateOfBirth = dateOfBirth;
 		this.gender = gender;
 		this.telephoneNumber = telephoneNumber;
 		this.email = email;
 		this.addresses = addresses;
-		this.shoppingCart = shoppingCart;
 		this.bills = bills;
 	}
 
@@ -101,12 +103,12 @@ public class User {
 		this.bills = bills;
 	}
 
-	public int getId() {
-		return Id;
+	public Integer getId() {
+		return id;
 	}
 
-	public void setId(int id) {
-		Id = id;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -155,14 +157,6 @@ public class User {
 
 	public void setAddresses(List<Address> addresses) {
 		this.addresses = addresses;
-	}
-
-	public Cart getShoppingCart() {
-		return shoppingCart;
-	}
-
-	public void setShoppingCart(Cart shoppingCart) {
-		this.shoppingCart = shoppingCart;
 	}
 
 	public List<Bill> getBills() {
@@ -220,5 +214,19 @@ public class User {
 	public void setVerificationCode(String verificationCode) {
 		this.verificationCode = verificationCode;
 	}
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
 	
+	@Transient
+	public String getImagePath() {
+		if (avatar == null || id == null) return null;
+		
+		return "/avatar-images/" + id + "/" + avatar;
+	}
 }

@@ -14,11 +14,15 @@ public interface UserService {
 
 	List<User> listAll();
 	
-	User registerUser(User user);
+	void registerUser(User user);
 	
-	void updateUser(User user);
+	User save(User user);
+	
+	User updateUser(User user);
 	
 	void sendVerificationEmail(User user, String siteURL) throws UnsupportedEncodingException, MessagingException;
 	
 	boolean verify(String verificationCode);
+	
+	User findByUsername(String username); 
 }

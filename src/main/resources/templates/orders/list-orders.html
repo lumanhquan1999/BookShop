@@ -11,11 +11,12 @@
 	<div th:replace="fragments :: menu"></div>
 	
 	<div>
-		<h3 style="text-align:center;"><b>Book Directory</b></h3>
+		<h3 style="text-align:center;"><b>Order List</b></h3>
 	</div>
 	
 	<hr>
 
+	<!-- 
 	<div>
 		<form th:action="@{/page/1}">
 			<input type="hidden" name="sortField" th:value="${sortField}" />
@@ -27,68 +28,30 @@
 			<input type="button" value="Clear" onclick="clearFilter()"/>
 		</form>
 	</div>
-	
+	-->
 	<br>
-
-	<a sec:authorize="hasAnyAuthority('ADMIN', 'STAFF')" th:href="@{/books/showFormForAdd}"
-		class="btn btn-primary btn-sm mb-3">
-		Add Book
-	</a>
 	
 	<div>
 	<table class="table table-bordered table-striped">
 		<thead class="table-dark">
 			<tr>
-				<th>
-					<a th:href="@{'/page/' + ${currentPage} + '?sortField=name&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">
-						Name
-					</a>	
-				</th>
-				<th>Category</th>
-				<th>Publisher</th>
-				<th>
-					<a th:href="@{'/page/' + ${currentPage} + '?sortField=price&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">
-						Price
-					</a>	
-				</th>
-				<th>Image</th>
-				<th>Release Date</th>
-				<th>Action</th>
+				<th>Order Date</th>
+				<th>Customer Name</th>
+				<th>Customer Address</th>
+				<th>Customer Email</th>
+				<th>Amount</th>
+				<th>View</th>
 			</tr>
 		</thead>
 		
 		<tbody>
-			<tr th:each="tempBook : ${books}">
-			
-				<td th:text="${tempBook.name}" />
-				<td th:text="${tempBook.category.name}" />
-				<td th:text="${tempBook.publisher.name}" />
-				<td th:text="${tempBook.price}" />
-				<td> 
-					<img th:src="@{${tempBook.ImagePath}}" style="width: 100px"> 
-				</td>
-				<td th:text="${tempBook.releaseDate}" />
-				
-				<td sec:authorize="hasAnyAuthority('ADMIN', 'STAFF')">
-					<a th:href="@{/books/showFormForUpdate(bookId=${tempBook.id})}"
-						class="btn btn-info btn-sm">
-						Update
-					</a>
-				
-					<a sec:authorize="hasAuthority('ADMIN')" th:href="@{/books/delete(bookId=${tempBook.id})}"
-						class="btn btn-danger btn-sm"
-						onclick="if (!(confirm('Are you sure you want to delete this book?'))) return false">
-						Delete
-					</a>
-				
-				</td>
-				
-				
-				<td sec:authorize="!hasAnyAuthority('ADMIN', 'STAFF')" >
-					<a th:href="@{|/buyBook?id=${tempBook.id}|}">
-						Add to cart
-					</a>
-				</td>
+			<tr th:each="temp : ${orders}">
+				<td th:text="${temp.orderDate}" />
+				<td th:text="${temp.customerName}" />
+				<td th:text="${temp.customerAddress}" />
+				<td th:text="${temp.customerEmail}" />
+				<td th:text="${temp.amount}" />
+				<td><a th:href="@{'/orders/order?orderId=' + ${temp.id}}">View Detail</a></td>
 			</tr>
 		
 		
@@ -122,18 +85,11 @@
 		<a th:if="${currentPage < totalPages}" th:href="@{'/page/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : ''}}">Last</a>
 		<span th:unless="${currentPage < totalPages}">Last</span>
 		
-		
 	</div>
 	
 	</div>
 	<hr>
 	<div th:replace="fragments :: footer"></div>
-	
-	<script type="text/javascript">
-		function clearFilter() {
-			window.location = '/books/list';
-		}
-	</script>
 	
 </body>
 

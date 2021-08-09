@@ -7,10 +7,9 @@ public class OrderInfo {
 
 	private Integer id;
 	private Date orderDate;
-	private int ordNum;
 	private double amount;
 	
-	private String customername;
+	private String customerName;
 	private String customerAddress;
 	private String customerEmail;
 	private String customerPhone;
@@ -21,17 +20,15 @@ public class OrderInfo {
 		
 	}
 
-	public OrderInfo(Integer id, Date orderDate, int ordNum, double amount, String customername, String customerAddress,
-			String customerEmail, String customerPhone, List<OrderDetailInfo> details) {
+	public OrderInfo(Integer id, Date orderDate, double amount, String customerName, String customerAddress,
+			String customerEmail, String customerPhone) {
 		this.id = id;
 		this.orderDate = orderDate;
-		this.ordNum = ordNum;
 		this.amount = amount;
-		this.customername = customername;
+		this.customerName = customerName;
 		this.customerAddress = customerAddress;
 		this.customerEmail = customerEmail;
 		this.customerPhone = customerPhone;
-		this.details = details;
 	}
 
 	public Integer getId() {
@@ -50,14 +47,6 @@ public class OrderInfo {
 		this.orderDate = orderDate;
 	}
 
-	public int getOrdNum() {
-		return ordNum;
-	}
-
-	public void setOrdNum(int ordNum) {
-		this.ordNum = ordNum;
-	}
-
 	public double getAmount() {
 		return amount;
 	}
@@ -67,11 +56,11 @@ public class OrderInfo {
 	}
 
 	public String getCustomername() {
-		return customername;
+		return customerName;
 	}
 
-	public void setCustomername(String customername) {
-		this.customername = customername;
+	public void setCustomername(String customerName) {
+		this.customerName = customerName;
 	}
 
 	public String getCustomerAddress() {

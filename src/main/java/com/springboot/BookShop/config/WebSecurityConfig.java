@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.springboot.BookShop.service.UserDetailsServiceImpl;
+import com.springboot.BookShop.service.impl.UserDetailsServiceImpl;
 
 @Configuration
 @EnableWebSecurity
@@ -46,20 +46,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		
 		http.authorizeRequests()
-			.antMatchers("/delete/**").hasAuthority("ADMIN")
-			.antMatchers("/edit/**").hasAnyAuthority("ADMIN", "STAFF")
-			.antMatchers("/register", "/webjars/**", "/process_register", "/verify" ).permitAll()
-			.anyRequest().authenticated()
+			.antMatchers("/list_users").hasAuthority("ADMIN")
+			.anyRequest().permitAll()
 			.and()
 			.formLogin()
+				.loginPage("/login")
 				.defaultSuccessUrl("/books/list", true)
 				.permitAll()
 			.and()
 			.logout()
-				.logoutSuccessUrl("/")
+				.logoutSuccessUrl("/books/list")
 				.permitAll()
 			.and()
-			.exceptionHandling().accessDeniedPage("/403")
 			;
 	}
 }

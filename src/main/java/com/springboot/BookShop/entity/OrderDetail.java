@@ -1,11 +1,11 @@
 package com.springboot.BookShop.entity;
 
-import java.io.Serializable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -13,15 +13,14 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="order_detail")
-public class OrderDetail implements Serializable {
-
-	private static final long serialVersionUID = 7550745928843183535L;
+public class OrderDetail {
 	
 	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
 	private String Id;
 	
-	@ManyToOne(fetch=FetchType.EAGER, cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	@ManyToOne(fetch=FetchType.EAGER, cascade= CascadeType.ALL)
 	@JoinColumn(name="order_id")
 	private Order order;
 	

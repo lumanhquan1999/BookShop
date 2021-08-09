@@ -5,20 +5,11 @@ import java.util.List;
 
 public class CartInfo {
 
-	private int orderNum;
 	private CustomerInfo customerInfo;
 	private final List<CartLineInfo> cartLines = new ArrayList<>();
 	
 	public CartInfo() {
 		
-	}
-
-	public int getOrderNum() {
-		return orderNum;
-	}
-
-	public void setOrderNum(int orderNum) {
-		this.orderNum = orderNum;
 	}
 
 	public CustomerInfo getCustomerInfo() {
@@ -33,6 +24,10 @@ public class CartInfo {
 		return cartLines;
 	}
 	
+	public void setCustomerInfo(CustomerInfo customerInfo) {
+		this.customerInfo = customerInfo;
+	}
+
 	private CartLineInfo findLineById(Integer id) {
 		for (CartLineInfo line : this.cartLines) {
 			if (line.getBookInfo().getId().equals(id)) {
@@ -50,7 +45,8 @@ public class CartInfo {
 			line.setQuantity(1);
 			line.setBookInfo(bookInfo);
 			this.cartLines.add(line);
-		}
+		} else {
+			line.setQuantity(line.getQuantity() + 1);		}
 	}
 	
 	public void updateBook(Integer id, int quantity) {

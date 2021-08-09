@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+	<meta charset="ISO-8859-1">
+	<title>Account</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css"/>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}">
+</head>
+
+<body>
+	<div class="container fluid">
+		<div th:replace="fragments :: menu"></div>
+		<h3>Account Information</h3>
+		<br>
+	</div>
+	
+	<div class="account-information-container" th:each="temp : ${user}">
+		<ul>
+			<li><img th:src="@{${user.ImagePath}}" style="width: 100px"></li>
+			
+			<li>Name: <span th:utext="${user.name}"></span></li>
+			
+			<li>Date of Birth: <span th:utext="${user.dateOfBirth}"></span></li>
+			
+			<li>Gender: <span th:utext="${user.gender}"></span></li>
+			
+			<li>Telephone Number: <span th:utext="${user.telephoneNumber}"></span></li>
+			
+			<li>Email: <span th:utext="${user.email}"></span></li>
+			
+			<li>Create Date: <span th:utext="${user.createDate}"></span></li>
+			
+			<!--  <li>Address: <span th:utext="${user.addresses}"></span></li>-->
+		</ul>
+	</div>
+</body>

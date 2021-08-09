@@ -1,22 +1,18 @@
-<!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org">
-<head>
-	<meta charset="ISO-8859-1">
-	<title>All Users</title>
-	<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css"/>
-	
-</head>
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head th:replace="fragments :: html_head"></head>
 
 <body>
 	<div class="container text-center">
 	
-		<div>
-			<form th:action="@{/logout}" method="post">
-				<p>
-					Welcome <b><span th:text="${#authentication.getPrincipal().getUsername()}"></span></b>
-				</p>
-				<input type="submit" value="Sign Out"/>
-			</form>
+		<div th:replace="fragments :: menu"></div>
+		
+		<div>			
+			<p>
+				Welcome <b><span th:text="${#authentication.getPrincipal().getUsername()}"></span></b>
+			</p>				
 		</div>
 	
 		<div>

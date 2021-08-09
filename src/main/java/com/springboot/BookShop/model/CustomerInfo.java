@@ -13,12 +13,12 @@ public class CustomerInfo {
 		
 	}
 
-	public CustomerInfo(String name, String address, String email, String phoneNumber, boolean valid) {
-		this.name = name;
-		this.address = address;
-		this.email = email;
-		this.phoneNumber = phoneNumber;
-		this.valid = valid;
+	public CustomerInfo(CustomerForm customerForm) {
+		this.name = customerForm.getName();
+		this.address = customerForm.getAddress();
+		this.email = customerForm.getEmail();
+		this.phoneNumber = customerForm.getPhoneNumber();
+		this.valid = customerForm.isValid();
 	}
 
 	public String getName() {

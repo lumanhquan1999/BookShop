@@ -57,10 +57,6 @@ public class Book {
 	private List<Author> authors;
 	
 	@ManyToMany(fetch=FetchType.LAZY, cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-	@JoinTable(name="shopping_cart_book", joinColumns=@JoinColumn(name="book_id"), inverseJoinColumns=@JoinColumn(name="shopping_cart_id"))
-	private List<Cart> shoppingCarts;
-	
-	@ManyToMany(fetch=FetchType.LAZY, cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinTable(name="bill_book", joinColumns=@JoinColumn(name="book_id"), inverseJoinColumns=@JoinColumn(name="bill_id"))
 	private List<Bill> bills;
 	
@@ -141,14 +137,6 @@ public class Book {
 
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
-	}
-
-	public List<Cart> getShoppingCarts() {
-		return shoppingCarts;
-	}
-
-	public void setShoppingCarts(List<Cart> shoppingCarts) {
-		this.shoppingCarts = shoppingCarts;
 	}
 
 	public List<Bill> getBills() {

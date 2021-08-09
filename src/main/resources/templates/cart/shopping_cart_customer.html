@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+				xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head th:replace="fragments :: html_head"></head>
+
+<body>
+
+	<div class="container">
+	
+		<h3>Customer Information</h3>
+		<hr>
+		
+		<p class="h4 mb-4">Save Customer</p>
+		
+		<form th:action="@{/shoppingCartCustomer}"
+						 th:object="${customerForm}" method="POST">
+			
+			<input type="text" th:field="*{name}"
+					class="form-control mb-4 col-4" placeholder="Name" required>
+					
+			<input type="text" th:field="*{address}"
+					class="form-control mb-4 col-4" placeholder="Address" required>
+			
+			<input type="text" th:field="*{email}"
+					class="form-control mb-4 col-4" placeholder="Email" required>
+			
+			<input type="text" th:field="*{phoneNumber}"
+					class="form-control mb-4 col-4" placeholder="Phone Number" required>
+			<br><br>
+			<button type="submit" class="btn btn-info col-2">Save</button>
+			&nbsp;
+			<input type="reset" value="Reset"/>
+		</form>
+	
+		<hr>
+		<a th:href="@{/shoppingCart}">Back to Cart</a>
+	</div>
+
+	<div th:replace="fragments :: footer"></div>
+	
+</body>
