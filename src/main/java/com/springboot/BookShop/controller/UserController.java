@@ -22,13 +22,16 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
+import com.springboot.BookShop.entity.Role;
 import com.springboot.BookShop.entity.User;
 import com.springboot.BookShop.service.UserService;
 import com.springboot.BookShop.utils.Utils;
@@ -42,14 +45,20 @@ public class UserController {
 	@GetMapping("/register")
 	public String showSingUpForm(Model model) {
 		
-		model.addAttribute("user", new User());
-		return "register/signup_form";
+		List<Role> listRoles = userService.listRoles();
+		
+		User user = new User();
+		model.addAttribute("user", user);
+		user.setEnable(true);
+		model.addAttribute("listRoles", listRoles);
+		model.addAttribute("pageTitle", "Create new user");
+		return "register/user_form";
 	}
 	
-	@PostMapping("/process_register")
+	@PostMapping("/saveUser")
 	public String processRegistration(@ModelAttribute("user") User user, 
 			@RequestParam("image") MultipartFile file, 
-			HttpServletRequest request) 
+			HttpServletRequest request, RedirectAttributes redirectAttributes) 
 			throws MessagingException, IOException {
 		
 		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
@@ -77,6 +86,8 @@ public class UserController {
 		
 		String siteURL = Utils.getSiteURL(request);
 		userService.sendVerificationEmail(user, siteURL);
+
+		redirectAttributes.addFlashAttribute("message", "The user has been saved successfully");
 		
 		return "register/register_success";
 	}
@@ -127,6 +138,15 @@ public class UserController {
 		}
 		
 		csvWriter.close();
+	}
+	
+	@GetMapping("/users/edit/{id}")
+	public String editUser(@PathVariable(name="id") Integer id, Model model) {
+		
+		User user = userService.findById(id);
+		model.addAttribute("user", user);
+		model.addAttribute("pageTitle", "Edit user");
+		return "register/user_form";
 	}
 	
 }

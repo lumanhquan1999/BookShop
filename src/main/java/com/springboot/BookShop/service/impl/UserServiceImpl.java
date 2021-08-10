@@ -3,6 +3,7 @@ package com.springboot.BookShop.service.impl;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -14,7 +15,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.springboot.BookShop.dao.RoleRepository;
 import com.springboot.BookShop.dao.UserRepository;
+import com.springboot.BookShop.entity.Book;
+import com.springboot.BookShop.entity.Role;
 import com.springboot.BookShop.entity.User;
 import com.springboot.BookShop.service.MyUserDetails;
 import com.springboot.BookShop.service.UserService;
@@ -29,6 +33,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private RoleRepository roleRepository;
 	
 	public void encodePassword(User user) {
 		
@@ -126,5 +133,33 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.findByUsername(username);
 		
 		return user;
+	}
+	
+	public User findById(Integer id) {
+		
+		Optional<User> result = userRepository.findById(id);
+		
+		User user = null;
+		
+		if (result.isPresent()) {
+			
+			user = result.get();
+		}
+		else {
+			throw new RuntimeException("Did not find book id - " + id);
+		}
+		return user;
+	}
+
+	@Override
+	public List<Role> listRoles() {
+		
+		return (List<Role>) roleRepository.findAll();
+	}
+	
+	public boolean isEmailUnique(String email) {
+		
+		User userByEmail = userRepository.getUserByEmail(email);
+		return userByEmail == null;
 	}
 }

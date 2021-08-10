@@ -5,11 +5,13 @@
 	<title>Book Shop</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" th:href="@{/font-awesome/all.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/style.css}" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 	<script th:src="@{/js/common.js}"></script>
 	<link rel="stylesheet" th:href="@{/fontawesome/all.css}">
-	<link rel="stylesheet" th:href="@{/style.css}">
+	<link rel="stylesheet" th:href="@{/styles.css}">
 </head>
 <body>
 	<div th:fragment="menu">
@@ -40,25 +42,18 @@
 					<a class="nav-link" sec:authorize="!isAuthenticated()" th:href="@{/login}">Login</a>
 				</li>
 				 
-				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" data-toggle="dropdown" sec:authorize="isAuthenticated()"
-					th:href="@{/account}" sec:authentication="principal.username"></a>
-					<div class="dropdown-menu">
-						<form th:action="@{/logout}" method="post" th:hidden="true" name="logoutForm">
-							<input type="submit" value="Logout" />
-						</form>
-						<a class="dropdown-item" sec:authorize="isAuthenticated()" href="" id="logoutLink">Logout</a>
-					</div>
+				<li class="nav-item">
+					<b><a class="nav-link" sec:authorize="isAuthenticated()"
+					th:href="@{/account}" sec:authentication="principal.username"></a></b>
 				</li>
 				
-				<!--
 				<li class="nav-item">
 					<form th:action="@{/logout}" method="post" th:hidden="true" name="logoutForm">
 						<input type="submit" value="Logout" />
 					</form>
 					<a class="nav-link" sec:authorize="isAuthenticated()" href="" id="logoutLink">Logout</a>
 				</li>
-				-->
+				
 			</ul>
 		
 		</nav>

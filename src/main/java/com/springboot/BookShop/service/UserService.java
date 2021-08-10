@@ -7,6 +7,7 @@ import javax.mail.MessagingException;
 
 import org.springframework.stereotype.Repository;
 
+import com.springboot.BookShop.entity.Role;
 import com.springboot.BookShop.entity.User;
 
 @Repository
@@ -24,5 +25,11 @@ public interface UserService {
 	
 	boolean verify(String verificationCode);
 	
-	User findByUsername(String username); 
+	User findByUsername(String username);
+	
+	User findById(Integer id);
+	
+	List<Role> listRoles();
+	
+	boolean isEmailUnique(String email);
 }

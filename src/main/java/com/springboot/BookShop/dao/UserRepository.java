@@ -14,7 +14,10 @@ import com.springboot.BookShop.entity.User;
 public interface UserRepository extends JpaRepository<User, Integer> {
 
 	@Query("SELECT u FROM User u WHERE u.username = :username")
-	public User getUserByUsername(@Param("username") String username );
+	public User getUserByUsername(@Param("username") String username);
+	
+	@Query("SELECT u FROM User u WHERE u.email= :email")
+	public User getUserByEmail(@Param("email") String email);
 	
 	@Query("UPDATE User u SET u.enable = true WHERE u.id = ?1")
 	@Modifying

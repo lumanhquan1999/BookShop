@@ -17,7 +17,12 @@
 	
 		<div>
 			<h1>List of All Users</h1>
+			<a th:href=@{/register}>Create new user</a>
 			<a th:href=@{/users/export}>Export to CSV</a>		
+		</div>
+		
+		<div th:if="${message != null}" class="alert alert-success text-center">
+			[[${message}]]
 		</div>
 		
 		<div>
@@ -30,17 +35,31 @@
 					<th>Telephone Number</th>
 					<th>Date Of Birth</th>
 					<th>Gender</th>
+					<th>Roles</th>
+					<th>Enable</th>
+					<th>Action</th>
 				</tr>
 			</thead>
 			
 			<tbody>
 				<tr th:each="user: ${listUsers}">
-					<td th:text="${user.id}">ID</td>
-					<td th:text="${user.name}">Name</td>
-					<td th:text="${user.email}">Email</td>
-					<td th:text="${user.telephoneNumber}">Telephone Number</td>
-					<td th:text="${user.dateOfBirth}">Date Of Birth</td>
-					<td th:text="${user.gender}">Gender</td>
+					<td th:text="${user.id}"></td>
+					<td th:text="${user.name}"></td>
+					<td th:text="${user.email}"></td>
+					<td th:text="${user.telephoneNumber}"></td>
+					<td th:text="${user.dateOfBirth}"></td>
+					<td th:text="${user.gender}"></td>
+					<td th:text="${user.roles}"></td>
+					<td>
+						<div th:if="${user.enable == true}" class="fas fa-check-circle fa-2x icon-green" href=""></div>
+						<div th:if="${user.enable == false}" class="fas fa-check-circle fa-2x icon-dark" href=""></div>
+					</td>
+					<td>
+						<a class="fas fa-edit fa-2x icon-green" th:href="@{'/users/edit/' + ${user.id}}" 
+						title="Edit this user"></a>
+						&nbsp;
+						<a class="fas fa-trash fa-2x icon-dark" href=""></a>
+					</td>
 				</tr>
 			</tbody>
 		</table>
