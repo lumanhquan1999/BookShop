@@ -1,8 +1,8 @@
 package com.springboot.BookShop.dao;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,7 +11,7 @@ import com.springboot.BookShop.entity.User;
 
 @Repository
 @Transactional
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends PagingAndSortingRepository<User, Integer> {
 
 	@Query("SELECT u FROM User u WHERE u.username = :username")
 	public User getUserByUsername(@Param("username") String username);
@@ -28,5 +28,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	
 	@Query("SELECT u FROM User u WHERE u.username = ?1")
 	public User findByUsername(String username);
+
+	public Long countById(Integer id);
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.mail.MessagingException;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Repository;
 
 import com.springboot.BookShop.entity.Role;
@@ -12,12 +13,14 @@ import com.springboot.BookShop.entity.User;
 
 @Repository
 public interface UserService {
-
-	List<User> listAll();
 	
-	void registerUser(User user);
+	List<User> findAll();
 	
-	User save(User user);
+	Page<User> listAll(int pageNumber);
+	
+	void save(User user);
+	
+	User saveRegister(User user);
 	
 	User updateUser(User user);
 	
@@ -31,5 +34,7 @@ public interface UserService {
 	
 	List<Role> listRoles();
 	
-	boolean isEmailUnique(String email);
+	boolean isEmailUnique(Integer id, String email);
+	
+	void delete(Integer id);
 }

@@ -81,8 +81,7 @@
 						Delete
 					</a>
 				
-				</td>
-				
+				</td>			
 				
 				<td sec:authorize="!hasAnyAuthority('ADMIN', 'STAFF')" >
 					<a th:href="@{|/buyBook?id=${tempBook.id}|}">

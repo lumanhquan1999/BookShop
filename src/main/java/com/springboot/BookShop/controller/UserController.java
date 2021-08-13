@@ -9,13 +9,16 @@ import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +34,7 @@ import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
+import com.springboot.BookShop.entity.Book;
 import com.springboot.BookShop.entity.Role;
 import com.springboot.BookShop.entity.User;
 import com.springboot.BookShop.service.UserService;
@@ -42,8 +46,8 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
-	@GetMapping("/register")
-	public String showSingUpForm(Model model) {
+	@GetMapping("/users/new")
+	public String showUserForm(Model model) {
 		
 		List<Role> listRoles = userService.listRoles();
 		
@@ -52,9 +56,28 @@ public class UserController {
 		user.setEnable(true);
 		model.addAttribute("listRoles", listRoles);
 		model.addAttribute("pageTitle", "Create new user");
-		return "register/user_form";
+		return "user/user_form";
 	}
 	
+	@PostMapping("/createUser")
+	public String createUser(User user, RedirectAttributes redirectAttributes)
+			throws MessagingException, IOException {
+		
+		userService.save(user);
+		
+		redirectAttributes.addFlashAttribute("message", "The user has been saved successfully");
+		return "redirect:/list_users";
+	}
+	
+	@GetMapping("/register")
+	public String showSignUpForm(Model model) {
+			
+		User user = new User();
+		model.addAttribute("user", user);
+		model.addAttribute("pageTitle", "Registration");
+		return "user/user_register";
+	}
+
 	@PostMapping("/saveUser")
 	public String processRegistration(@ModelAttribute("user") User user, 
 			@RequestParam("image") MultipartFile file, 
@@ -65,9 +88,7 @@ public class UserController {
 		
 		user.setAvatar(fileName);
 		
-		userService.registerUser(user);
-		
-		User savedUser = userService.save(user);
+		User savedUser = userService.saveRegister(user);
 		
 		String uploadDir = "./avatar-images/" + savedUser.getId();
 		
@@ -87,16 +108,28 @@ public class UserController {
 		String siteURL = Utils.getSiteURL(request);
 		userService.sendVerificationEmail(user, siteURL);
 
-		redirectAttributes.addFlashAttribute("message", "The user has been saved successfully");
-		
-		return "register/register_success";
+		return "/user/register_success";
 	}
 	
 	@GetMapping("/list_users")
 	public String viewUserList(Model model) {
 		
-		List<User> listUsers = userService.listAll();
-		model.addAttribute("listUsers", listUsers);
+		return listUserByPage(model, 1);
+	}
+	
+	@GetMapping("/userPage/{pageNumber}")
+	public String listUserByPage(Model model, @PathVariable("pageNumber") int currentPage) {
+		Page<User> page = userService.listAll(currentPage);
+		long totalItems = page.getTotalElements();
+		int totalPages = page.getTotalPages();
+		
+		List<User> users = page.getContent();
+		
+		model.addAttribute("currentPage", currentPage);
+		model.addAttribute("totalItems", totalItems);
+		model.addAttribute("totalPages", totalPages);
+		model.addAttribute("listUsers", users);
+		
 		return "users";
 	}
 	
@@ -108,7 +141,7 @@ public class UserController {
 		String pageTitle = verified ? "Verification Succeeded!" : "Verification Failed";
 		model.addAttribute("pageTitle", pageTitle);
 		
-		return "register/" + (verified ? "verify_success" : "verify_fail");
+		return "user/" + (verified ? "verify_success" : "verify_fail");
 	}
 	
 	@GetMapping("/users/export")
@@ -124,7 +157,7 @@ public class UserController {
 		
 		response.setHeader(headerKey,  headerValue);
 		
-		List<User> listUsers = userService.listAll();
+		List<User> listUsers = userService.findAll();
 		
 		ICsvBeanWriter csvWriter = new CsvBeanWriter(response.getWriter(), CsvPreference.STANDARD_PREFERENCE);
 		
@@ -141,12 +174,36 @@ public class UserController {
 	}
 	
 	@GetMapping("/users/edit/{id}")
-	public String editUser(@PathVariable(name="id") Integer id, Model model) {
+	public String editUser(@PathVariable(name="id") Integer id, Model model,
+			RedirectAttributes redirectAttributes) {
 		
-		User user = userService.findById(id);
-		model.addAttribute("user", user);
-		model.addAttribute("pageTitle", "Edit user");
-		return "register/user_form";
+		try {
+			User user = userService.findById(id);
+			List<Role> listRoles = userService.listRoles();
+			
+			model.addAttribute("user", user);
+			model.addAttribute("pageTitle", "Edit user");
+			model.addAttribute("listRoles", listRoles);
+			
+			return "user/user_form";
+		} catch (RuntimeException e) {
+			redirectAttributes.addFlashAttribute("message", e.getMessage());
+			return "redirect:/list_users";
+		}
 	}
 	
+	@GetMapping("/users/delete/{id}")
+	public String deleteUser(@PathVariable(name="id") Integer id, Model model,
+			RedirectAttributes redirectAttributes) {
+		try {
+			userService.delete(id);
+			
+			redirectAttributes.addFlashAttribute("message", "The user ID " + id + " has been deleted successfully");
+			
+			return "redirect:/list_users";
+		} catch (RuntimeException e) {
+			redirectAttributes.addFlashAttribute("message", e.getMessage());
+			return "redirect:/list_users";
+		}
+	}
 }
