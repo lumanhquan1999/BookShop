@@ -16,7 +16,7 @@ public interface UserService {
 	
 	List<User> findAll();
 	
-	Page<User> listAll(int pageNumber);
+	Page<User> listAll(int pageNumber, String keyword);
 	
 	void save(User user);
 	
@@ -37,4 +37,6 @@ public interface UserService {
 	boolean isEmailUnique(Integer id, String email);
 	
 	void delete(Integer id);
+	
+	void updateUserEnabledStatus(Integer id, boolean enable);
 }

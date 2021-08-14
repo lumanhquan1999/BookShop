@@ -2,8 +2,10 @@ package com.springboot.BookShop.service.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -46,18 +48,25 @@ public class UserServiceImpl implements UserService {
 		user.setPassword(encodedPassword);
 	}
 	
-	public Page<User> listAll(int pageNumber) {
+	public Page<User> listAll(int pageNumber, String keyword) {
 		
 		Pageable pageable = PageRequest.of(pageNumber - 1, 5);
-		return userRepository.findAll(pageable);
+		
+		if (keyword != null) {
+			return userRepository.findAll(keyword, pageable);
+		}
+		return userRepository.findAll(keyword, pageable);
 	}
 	
 	public User saveRegister(User user) {
 		
+		Set<Role> listRoles = new HashSet<>();
+		listRoles.add(roleRepository.findByName("USER"));
 		encodePassword(user);
 		user.setCreateDate(new Date());
 		user.setEnable(false);
-			
+		user.setRoles(listRoles);
+		
 		String randomCode = RandomString.make(64);
 		user.setVerificationCode(randomCode);
 			
@@ -211,5 +220,11 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		userRepository.deleteById(id);
+	}
+
+	@Override
+	public void updateUserEnabledStatus(Integer id, boolean enable) {
+		
+		userRepository.updateEnabledStatus(id, enable);
 	}
 }

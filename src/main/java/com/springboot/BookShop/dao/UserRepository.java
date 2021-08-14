@@ -1,5 +1,7 @@
 package com.springboot.BookShop.dao;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -30,5 +32,13 @@ public interface UserRepository extends PagingAndSortingRepository<User, Integer
 	public User findByUsername(String username);
 
 	public Long countById(Integer id);
+	
+	@Query("UPDATE User u Set u.enable = ?2 WHERE u.id = ?1")
+	@Modifying
+	public void updateEnabledStatus(Integer id, boolean enable);
 
+	@Query("SELECT p FROM User p WHERE "
+			+ "CONCAT(p.id, ' ', p.name, ' ', p.email) "
+			+ "LIKE %?1%")
+	public Page<User> findAll(String keyword, Pageable pageable);
 }

@@ -17,13 +17,22 @@
 	
 		<div>
 			<h1>List of All Users</h1>
+			<hr>
 			<a th:href=@{/users/new} class="btn btn-primary btn-sm mb-3">Create new user</a>
 			<a th:href=@{/users/export}>Export to CSV</a>		
 		</div>
 		
 		<div>
-			<form th:action="@{/userPage/1}"></form>
+			<form th:action="@{/userPage/1}">
+				<input type="text" name="keyword" th:value="${keyword}" required/>
+				&nbsp;
+				<input type="submit" value="Search" />
+				&nbsp;
+				<input type="button" value="Clear" onclick="clearFilter()"/>
+			</form>
 		</div>
+		
+		<br>
 		
 		<div th:if="${message != null}" class="alert alert-success text-center">
 			[[${message}]]
@@ -55,8 +64,12 @@
 					<td th:text="${user.gender}"></td>
 					<td th:text="${user.roles}"></td>
 					<td>
-						<p th:if="${user.enable == true}" class="fas fa-check-circle fa-2x icon-green"></p>
-						<p th:if="${user.enable == false}" class="fas fa-check-circle fa-2x icon-dark"></p>
+						<a th:if="${user.enable == true}" class="fas fa-check-circle fa-2x icon-green" 
+						th:href="@{'/users/' + ${user.id} + '/enable/false'}"
+						title="Disable this user"></a>
+						<a th:if="${user.enable == false}" class="fas fa-circle fa-2x icon-dark" 
+						th:href="@{'/users/' + ${user.id} + '/enable/true'}"
+						title="Enable this user"></a>
 					</td>
 					<td>
 						<a class="fas fa-edit fa-2x icon-green" th:href="@{'/users/edit/' + ${user.id}}" 
@@ -95,25 +108,25 @@
 			Total Items: [[${totalItems}]] - Page [[${currentPage}]] of [[${totalPages}]]
 			&nbsp; - &nbsp;
 			
-			<a th:if="${currentPage > 1}" th:href="@{'/userPage/1'}">First</a>
+			<a th:if="${currentPage > 1}" th:href="@{'/userPage/1?' + ${keyword != null ? 'keyword=' + keyword : ''}}">First</a>
 			<span th:unless="${currentPage > 1}">First</span>
 			&nbsp;&nbsp;
 			
-			<a th:if="${currentPage > 1}" th:href="@{'/userPage/' + ${currentPage - 1}}">Previous</a>
+			<a th:if="${currentPage > 1}" th:href="@{'/userPage/' + ${currentPage - 1} + ${keyword != null ? '?keyword=' + keyword : ''}}">Previous</a>
 			<span th:unless="${currentPage > 1}">Previous</span>
 			&nbsp;&nbsp;
 			
 			<span th:each="i: ${#numbers.sequence(1, totalPages)}">
-				<a th:if="${i != currentPage}" th:href="@{'/userPage/' + ${i}}">[[${i}]]</a> 
+				<a th:if="${i != currentPage}" th:href="@{'/userPage/' + ${i} + ${keyword != null ? '?keyword=' + keyword : ''}}">[[${i}]]</a> 
 				<span th:unless="${i != currentPage}">[[${i}]]</span>
 				&nbsp;&nbsp;
 			</span>
 			
-			<a th:if="${currentPage < totalPages}" th:href="@{'/userPage/' + ${currentPage + 1}}">Next</a>
+			<a th:if="${currentPage < totalPages}" th:href="@{'/userPage/' + ${currentPage + 1} + ${keyword != null ? '?keyword=' + keyword : ''}}">Next</a>
 			<span th:unless="${currentPage < totalPages}">Next</span>
 			&nbsp;&nbsp;
 			
-			<a th:if="${currentPage < totalPages}" th:href="@{'/userPage/' + ${totalPages}}">Last</a>
+			<a th:if="${currentPage < totalPages}" th:href="@{'/userPage/' + ${totalPages} + ${keyword != null ? '?keyword=' + keyword : ''}}">Last</a>
 			<span th:unless="${currentPage < totalPages}">Last</span>
 		</div>			
 	</div>

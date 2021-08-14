@@ -9,9 +9,7 @@ import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +32,6 @@ import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.prefs.CsvPreference;
 
-import com.springboot.BookShop.entity.Book;
 import com.springboot.BookShop.entity.Role;
 import com.springboot.BookShop.entity.User;
 import com.springboot.BookShop.service.UserService;
@@ -72,8 +69,10 @@ public class UserController {
 	@GetMapping("/register")
 	public String showSignUpForm(Model model) {
 			
+		List<Role> listRoles = userService.listRoles();
 		User user = new User();
 		model.addAttribute("user", user);
+		model.addAttribute("listRoles", listRoles);
 		model.addAttribute("pageTitle", "Registration");
 		return "user/user_register";
 	}
@@ -114,12 +113,13 @@ public class UserController {
 	@GetMapping("/list_users")
 	public String viewUserList(Model model) {
 		
-		return listUserByPage(model, 1);
+		return listUserByPage(model, 1, "");
 	}
 	
 	@GetMapping("/userPage/{pageNumber}")
-	public String listUserByPage(Model model, @PathVariable("pageNumber") int currentPage) {
-		Page<User> page = userService.listAll(currentPage);
+	public String listUserByPage(Model model, @PathVariable("pageNumber") int currentPage,
+			@Param("keyword") String keyword) {
+		Page<User> page = userService.listAll(currentPage, keyword);
 		long totalItems = page.getTotalElements();
 		int totalPages = page.getTotalPages();
 		
@@ -129,6 +129,7 @@ public class UserController {
 		model.addAttribute("totalItems", totalItems);
 		model.addAttribute("totalPages", totalPages);
 		model.addAttribute("listUsers", users);
+		model.addAttribute("keyword", keyword);
 		
 		return "users";
 	}
@@ -205,5 +206,17 @@ public class UserController {
 			redirectAttributes.addFlashAttribute("message", e.getMessage());
 			return "redirect:/list_users";
 		}
+	}
+	
+	@GetMapping("users/{id}/enable/{status}")
+	public String updateUserEnableStatus(@PathVariable(name="id") Integer id, Model model,
+			@PathVariable("status") boolean enable, RedirectAttributes redirectAttributes) {
+		
+		userService.updateUserEnabledStatus(id, enable);
+		String status = enable ? "enable" : "disable";
+		String message = "The user ID " + id + " has been " + status;
+		redirectAttributes.addFlashAttribute("message", message);
+		
+		return "redirect:/list_users";
 	}
 }
