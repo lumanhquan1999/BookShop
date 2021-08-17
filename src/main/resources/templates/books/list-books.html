@@ -15,7 +15,7 @@
 	</div>
 	
 	<hr>
-
+	
 	<div>
 		<form th:action="@{/page/1}">
 			<input type="hidden" name="sortField" th:value="${sortField}" />
@@ -133,6 +133,15 @@
 			window.location = '/books/list';
 		}
 	</script>
+	
+	<!--  <script type="text/javascript">
+		$(document).ready(function() {
+			$("#logoutLink").on("click", function(e) {
+				e.preventDefault();
+				document.logoutForm.submit();
+			});
+		});
+	</script>-->
 	
 </body>
 

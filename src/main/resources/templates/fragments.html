@@ -1,21 +1,29 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+		xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head th:fragment="html_head">
 	<meta charset="ISO-8859-1">
 	<title>Book Shop</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" th:href="@{/font-awesome/all.css}" />
 	<link rel="stylesheet" type="text/css" th:href="@{/style.css}" />
+	<script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-	<script th:src="@{/js/common.js}"></script>
+	<script type="text/javascript" th:src="@{/js/common.js}"></script>
 	<link rel="stylesheet" th:href="@{/fontawesome/all.css}">
 	<link rel="stylesheet" th:href="@{/styles.css}">
 </head>
 <body>
 	<div th:fragment="menu">
+		<form th:action="@{/logout}" method="post" th:hidden="true" name="logoutForm">
+			<input type="submit"/>
+		</form>
+		
 		<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+		
 			<ul class="navbar-nav mr-auto">
 				
 				<li class="nav-item">
@@ -42,17 +50,20 @@
 					<a class="nav-link" sec:authorize="!isAuthenticated()" th:href="@{/login}">Login</a>
 				</li>
 				 
-				<li class="nav-item">
-					<b><a class="nav-link" sec:authorize="isAuthenticated()"
-					th:href="@{/account}" sec:authentication="principal.username"></a></b>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" data-toggle="dropdown" 
+						sec:authorize="isAuthenticated()" sec:authentication="principal.username"></a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" id="logoutLink" href="">Logout</a>
+					</div>
 				</li>
 				
-				<li class="nav-item">
+				<!--  <li class="nav-item">
 					<form th:action="@{/logout}" method="post" th:hidden="true" name="logoutForm">
 						<input type="submit" value="Logout" />
 					</form>
 					<a class="nav-link" sec:authorize="isAuthenticated()" href="" id="logoutLink">Logout</a>
-				</li>
+				</li>-->
 				
 			</ul>
 		
@@ -62,6 +73,7 @@
 	<div th:fragment="footer" class="text-center">
 		<p>Book Shop - Copyright &copy; Quan</p>
 	</div>
+	
 	
 </body>
 
